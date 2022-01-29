@@ -1,19 +1,16 @@
-/*
-COVID 19 Data Exploration 
-Skills used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
-*/
-
 SELECT *
 FROM PortfolioProject..CovidDeaths
-WHERE continent is not null -- To remove lines where data refers to the entire continent, not country
 ORDER BY 3,4
 
+--SELECT *
+--FROM PortfolioProject..CovidVaccinations
+--ORDER BY 3,4
 
---Select Data to be used.
+--Select Data to be used
 
 SELECT continent, location, date, total_cases, new_cases, total_deaths, population
 FROM PortfolioProject..CovidDeaths
-WHERE continent is not null 
+WHERE continent is not null -- To remove lines where data refers to the entire continent, not country
 ORDER BY 2,3
 
 
@@ -35,15 +32,6 @@ WHERE continent is not null
 ORDER BY 1,2
 
 
--- Looking at countries with highest infection rate compared to population
-
-SELECT location, population, MAX(total_cases) AS Highest_Infection_Count, ROUND(MAX(total_cases/population)*100,4) AS Infection_Percentage
-FROM PortfolioProject..CovidDeaths
-WHERE continent is not null
-GROUP BY location, population
-ORDER BY 4 DESC
-
-
 -- Showing countries with highest death count per population
 
 SELECT location, MAX(CAST(total_deaths as int)) AS Total_Death_Count -- convert total deaths column from string to integer
@@ -53,13 +41,42 @@ GROUP BY location
 ORDER BY Total_Death_Count DESC
 
 
--- Showing continents with highest death count per population 
+-- Viz 1. Looking at Percentage of Total Deaths as a whole
 
-SELECT continent, MAX(CAST(total_deaths as int)) AS Total_Death_Count
+SELECT 
+	SUM(new_cases) AS Total_Cases, 
+	sum(cast(new_deaths as int)) AS Total_Deaths, 
+	ROUND(SUM(cast(new_deaths as int))/SUM(new_cases)*100,4) AS Death_Percentage
 FROM PortfolioProject..CovidDeaths
 WHERE continent is not null
+ORDER BY 1,2
+
+
+-- Viz 2. Showing continents with highest death count per population 
+
+SELECT continent, SUM(CAST(new_deaths as int)) AS Total_Death_Count
+FROM PortfolioProject..CovidDeaths
+WHERE continent is not null 
 GROUP BY continent
 ORDER BY Total_Death_Count DESC
+
+
+-- Viz 3. Looking at countries with highest infection rate compared to population
+
+SELECT location, population, MAX(total_cases) AS Highest_Infection_Count, ROUND(MAX(total_cases/population)*100,4) AS Infection_Percentage
+FROM PortfolioProject..CovidDeaths
+WHERE continent is not null
+GROUP BY location, population
+ORDER BY 4 DESC
+
+
+-- Viz 4. Looking at infection rates per country per day compared to population
+
+SELECT location, population, date, MAX(total_cases) AS Highest_Infection_Count, ROUND(MAX(total_cases/population)*100,4) AS Infection_Percentage
+FROM PortfolioProject..CovidDeaths
+WHERE continent is not null
+GROUP BY location, population, date
+ORDER BY 4 DESC
 
 
 -- Looking at Percentage of Total Deaths Per Date (Global)
@@ -72,17 +89,6 @@ SELECT
 FROM PortfolioProject..CovidDeaths
 WHERE continent is not null
 GROUP BY date
-ORDER BY 1,2
-
-
--- Looking at Percentage of Total Deaths as a whole
-
-SELECT 
-	SUM(new_cases) AS Total_Cases, 
-	sum(cast(new_deaths as int)) AS Total_Deaths, 
-	ROUND(SUM(cast(new_deaths as int))/SUM(new_cases)*100,4) AS Death_Percentage
-FROM PortfolioProject..CovidDeaths
-WHERE continent is not null
 ORDER BY 1,2
 
 
@@ -176,3 +182,4 @@ WHERE dea.continent is not null
 SELECT *
 FROM PercentPopulationVaccinated
 ORDER BY 2,3
+
