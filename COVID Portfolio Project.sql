@@ -161,7 +161,7 @@ SELECT *, (Rolling_Total_Vaccinations/Population)*100 AS Percentage_Vaccinated
 FROM #PercentPopulationVaccinated
 
 
--- Creating view to store data for later visualizations 
+-- Creating view 
 
 CREATE VIEW PercentPopulationVaccinated AS 
 SELECT 
