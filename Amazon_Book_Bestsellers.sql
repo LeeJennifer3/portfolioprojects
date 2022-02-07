@@ -1,4 +1,5 @@
-
+/ SQL analysis of bestselling books for the period of 2009-2021 / 
+/ Dataset of Amazon Book Bestsellers taken from Kaggle /
 
 -- Select datasets to be used
 
